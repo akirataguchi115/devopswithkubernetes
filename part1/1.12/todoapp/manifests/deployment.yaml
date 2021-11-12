@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todoapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todoapp
+  template:
+    metadata:
+      labels:
+        app: todoapp
+    spec:
+      volumes:
+        - name: shared-image
+      containers:
+        - name: todoapp
+          image: akiradock/todoapp
+          volumeMounts:
+            - mountPath: /usr/src/app/files
+              name: shared-image
