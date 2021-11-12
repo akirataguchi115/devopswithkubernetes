@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pingpongapp-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pingpongapp
+  template:
+    metadata:
+      labels:
+        app: pingpongapp
+    spec:
+      volumes:
+        - name: shared-file
+          persistentVolumeClaim:
+            claimName: file-claim
+      containers:
+        - name: pingpongapp
+          image: akiradock/pingpongapp
+          volumeMounts:
+            - mountPath: /usr/src/app/files
+              name: shared-file
