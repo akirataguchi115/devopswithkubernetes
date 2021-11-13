@@ -5,8 +5,8 @@ const axios = require('axios')
 const app = new Koa()
 const PORT = process.env.PORT || 3000
 
-// const directory = path.join('/', 'usr', 'src', 'app', 'files')
-const directory = path.join('./', 'files')
+const directory = path.join('/', 'usr', 'src', 'app', 'files')
+// const directory = path.join('./', 'files')
 const filePath = path.join(directory, 'image.jpg')
 
 const getFile = async () => new Promise(res => {

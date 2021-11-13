@@ -3,11 +3,19 @@ const path = require('path')
 const fs = require('fs')
 const axios = require('axios')
 const app = new Koa()
+const serve = require('koa-static')
+const views = require('koa-views')
+const Router = require('koa-router')
+app.use(serve('./public'))
 const PORT = process.env.PORT || 3000
+const router = new Router()
 
-const directory = path.join('/', 'usr', 'src', 'app', 'files')
-// const directory = path.join('./', 'files')
+// const directory = path.join('/', 'usr', 'src', 'app', 'files')
+const directory = path.join('./public', 'images')
 const filePath = path.join(directory, 'image.jpg')
+
+
+app.use(views('./views', { map: { html: 'nunjucks' }}))
 
 const getFile = async () => new Promise(res => {
   fs.readFile(filePath, (err, buffer) => {
@@ -27,17 +35,22 @@ const findAFile = async () => {
   if (await fileAlreadyExists()) return
 
   await new Promise(res => fs.mkdir(directory, (err) => res()))
-  const response = await axios.get('https://picsum.photos/500', { responseType: 'stream' })
+  const response = await axios.get('https://picsum.photos/200', { responseType: 'stream' })
   response.data.pipe(fs.createWriteStream(filePath))
 }
 
-app.use(async ctx => {
+router.get('/', async (ctx, next) => {
   if (ctx.path.includes('favicon.ico')) return
   findAFile()
   ctx.body = await getFile()
   ctx.set('Content-type', 'image/jpeg');
   ctx.status = 200
+  return ctx.render('./index')
 });
+
+app
+  .use(router.routes())
+  .use(router.allowedMethods())
 
 console.log('Started')
 
