@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-todoapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend-todoapp
+  template:
+    metadata:
+      labels:
+        app: frontend-todoapp
+    spec:
+      containers:
+        - name: frontend-todoapp
+          image: akiradock/frontend-todoapp
+          env:
+          - name: REACT_APP_BACKEND
+            value: http://localhost:8081
+          - name: REACT_APP_FRONTEND
+            value: http://localhost:8081
