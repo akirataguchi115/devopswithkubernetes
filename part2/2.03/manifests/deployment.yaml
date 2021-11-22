@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: logoutput-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: logoutput
+  template:
+    metadata:
+      labels:
+        app: logoutput
+      namespace: logoutput-namespace
+      name: logoutput
+    spec:
+      volumes:
+        - name: shared-file
+      containers:
+        - name: logoutput-reader
+          image: akiradock/logoutput-reader
+          volumeMounts:
+          - mountPath: /usr/src/app/files
+            name: shared-file
+        - name: logoutput-writer
+          image: akiradock/logoutput-writer
+          volumeMounts:
+          - mountPath: /usr/src/app/files
+            name: shared-file

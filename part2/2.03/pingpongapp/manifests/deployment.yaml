@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pingpongapp-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pingpongapp
+  template:
+    metadata:
+      labels:
+        app: pingpongapp
+      namespace: logoutput-namespace
+      name: logoutput
+    spec:
+      containers:
+        - name: pingpongapp
+          image: akiradock/pingpongapp
