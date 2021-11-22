@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-todoapp-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: backend-todoapp # This is the app as declared in the deployment.
+  ports:
+    - protocol: TCP
+      port: 2346 # This is a port that is available to the cluster, in this case it can be ~ anything
+      targetPort: 3001 # This is the target port

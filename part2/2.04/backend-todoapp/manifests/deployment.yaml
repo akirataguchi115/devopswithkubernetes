@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-todoapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-todoapp
+  template:
+    metadata:
+      labels:
+        app: backend-todoapp
+      namespace: todoapp-namespace
+      name: todoapp
+    spec:
+      containers:
+        - name: backend-todoapp
+          image: akiradock/backend-todoapp
+          env:
+          - name: BACKEND
+            value: http://localhost:8081/todos
+          - name: FRONTEND
+            value: http://localhost:8081
+          - name: FILESDIR
+            value: /usr/src/app/files
