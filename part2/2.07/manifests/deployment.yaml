@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: logoutput-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: logoutput
+  template:
+    metadata:
+      labels:
+        app: logoutput
+      namespace: logoutput-namespace
+      name: logoutput
+    spec:
+      volumes:
+        - name: shared-file
+      containers:
+        - name: logoutput-reader
+          image: akiradock/logoutput-reader
+          volumeMounts:
+            - mountPath: /usr/src/app/files
+              name: shared-file
+          env:
+            # Define the environment variable
+            - name: MESSAGE
+              valueFrom:
+                configMapKeyRef:
+                  # The ConfigMap containing the value you want to assign to SPECIAL_LEVEL_KEY
+                  name: special-config
+                  # Specify the key associated with the value
+                  key: message
+            - name: DIRECTORY
+              value: "/usr/src/app/files"
+            - name: PINGPONGADDRESS
+              value: 'http://pingpongapp-svc:2346'
+        - name: logoutput-writer
+          image: akiradock/logoutput-writer
+          volumeMounts:
+            - mountPath: /usr/src/app/files
+              name: shared-file
+          env:
+            # Define the environment variable
+            - name: MESSAGE
+              valueFrom:
+                configMapKeyRef:
+                  # The ConfigMap containing the value you want to assign to SPECIAL_LEVEL_KEY
+                  name: special-config
+                  # Specify the key associated with the value
+                  key: message
+            - name: DIRECTORY
+              value: "/usr/src/app/files"
+            - name: PINGPONGADDRESS
+              value: 'http://pingpongapp-svc:2346'

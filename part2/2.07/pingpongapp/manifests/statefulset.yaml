@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: pingpongapp-ss
+spec:
+  serviceName: pingpongapp-svc
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pingpongapp
+  template:
+    metadata:
+      labels:
+        app: pingpongapp
+      namespace: logoutput-namespace
+      name: logoutput
+    spec:
+      containers:
+        - name: pingpongapp
+          image: akiradock/pingpongapp
+          env:
+            - name: PINGPONGADDRESS
+              value: pingpongapp-svc:2346
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: psqlpw
+                  key: POSTGRES_PASSWORD
+
+        - name: postgres
+          image: postgres:latest
+          ports:
+            - name: web
+              containerPort: 6379
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: psqlpw
+                  key: POSTGRES_PASSWORD
+          envFrom:
+          - configMapRef:
+              name: postgres-configuration
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: local-path
+        resources:
+          requests:
+            storage: 100Mi

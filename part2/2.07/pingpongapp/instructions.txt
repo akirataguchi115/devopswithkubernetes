@@ -1,0 +1,11 @@
+sudo su - postgres
+psql
+
+CREATE USER dbuser;
+alter user dbuser with password 'dbsalis';
+createdb pingpongdb -O dbuser;
+\q
+psql pingpongdb
+CREATE TABLE pingpong(pings INT);
+INSERT INTO pingpong(pings) VALUES (0);
+GRANT ALL PRIVILEGES ON TABLE pingpong TO dbuser;
